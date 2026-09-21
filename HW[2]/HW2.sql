@@ -8,7 +8,9 @@
 set SQL_SAFE_UPDATES = 0;
 set FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS employs;
+-- I had tables beforehhand, this is to let them go
+
+DROP TABLE IF EXISTS employs; 
 DROP TABLE IF EXISTS offers;
 DROP TABLE IF EXISTS baristas;
 DROP TABLE IF EXISTS shops;
@@ -78,7 +80,8 @@ use hw1;
  
 -- 1.) Find the average price of pastries for each category from the pastries table
 
-select category, AVG(price) as 'AvgPrice'
+
+select category, format(avg(price), 2) as 'AvgPrice'
 from pastries
 group by category;
 
@@ -87,15 +90,11 @@ group by category;
 
 -- 2.) Find the total number of baristas at each experience level from the baristas table
 
-select * from baristas;
-
 select experience_level, count(experience_level) as 'NumOfBaristas'
 from baristas
 group by experience_level;
 
 -- 3.) Count the total number of shops located in each city from the shops table
-
-select * from shops;
 
 select city, count(shopID) as 'NumOfShops'
 from shops
@@ -104,16 +103,12 @@ group by city;
 
 -- 4.) Find the maximum price among pastries for each category from the pastries table.
 
-select * from pastries;
-
 select category, max(price) as 'MaxPrice'
 from pastries
 group by category;
 
 -- 5.) Count how many pastries have been added by each shop using the shopID column from 
 -- the offers table.
-
-select * from offers;
 
 select shopID, count(pastryID) as 'NumOfPastries'
 from offers
@@ -164,8 +159,6 @@ having count(pastryID) >= all (
 );
  
  -- 10.) Find the names of baristas who work at shops in 'Seattle' using nested subqueries.
-
-select * from employs;
 
 select name
 from baristas
