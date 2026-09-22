@@ -1,6 +1,8 @@
 -- *************************************************************
 -- HW2.sql: Database Schema Creation and Constraints
 -- *************************************************************
+	
+-- use hw1; (name of my database)
 
 -- *************************************************************
 -- Safe Updates
@@ -10,11 +12,11 @@ set FOREIGN_KEY_CHECKS = 0;
 
 -- I had tables beforehhand, this is to let them go
 
-DROP TABLE IF EXISTS employs; 
-DROP TABLE IF EXISTS offers;
-DROP TABLE IF EXISTS baristas;
-DROP TABLE IF EXISTS shops;
-DROP TABLE IF EXISTS pastries;
+-- DROP TABLE IF EXISTS employs; 
+-- DROP TABLE IF EXISTS offers;
+-- DROP TABLE IF EXISTS baristas;
+-- DROP TABLE IF EXISTS shops;
+-- DROP TABLE IF EXISTS pastries;
 
 -- *************************************************************
 -- 1. Create Tables for Entity Sets
@@ -76,12 +78,11 @@ create table employs (
 -- 3. Queries
 -- *************************************************************
 
-use hw1;
- 
+
 -- 1.) Find the average price of pastries for each category from the pastries table
 
 
-select category, format(avg(price), 2) as 'AvgPrice'
+select category, round(avg(price), 2) as 'AvgPrice' -- round makes them stop at two decimals
 from pastries
 group by category;
 
@@ -90,7 +91,9 @@ group by category;
 
 -- 2.) Find the total number of baristas at each experience level from the baristas table
 
-select experience_level, count(experience_level) as 'NumOfBaristas'
+
+
+select experience_level, count(*) as 'NumOfBaristas'
 from baristas
 group by experience_level;
 
@@ -127,16 +130,16 @@ where (category, price) in (
 );
 
 -- 7.) Find the unique shop IDs from the offers table that have offered at 
- -- least one pastry whose price is strictly greater than the overall avaerge price of all pastries
+ -- least one pastry whose price is strictly greater than the overall average price of all pastries
  
-select shopID
- from offers o, pastries p
- where o.pastryID = p.pastryID
-	and p.price > (select avg(price) from pastries)
-group by shopID;
-
+select distinct shopID
+from offers
+where pastryID in (
+		select pastryID
+		from pastries
+		where price > (select avg(price) from pastries)
+);
 	
-
  
  -- 8.) Find the shop ID and pastry ID for the record in the offers table that have the earliest
  -- date_added (minimum date).
@@ -150,15 +153,17 @@ group by shopID;
  -- the maximum count per shop.
  
 select shopID, count(pastryID) as 'NumOfPastries'
-from offers o
+from offers 
 group by shopID
 having count(pastryID) >= all (
 		select count(pastryID)
-		from offers o
+		from offers 
         group by shopID
 );
  
  -- 10.) Find the names of baristas who work at shops in 'Seattle' using nested subqueries.
+
+
 
 select name
 from baristas
