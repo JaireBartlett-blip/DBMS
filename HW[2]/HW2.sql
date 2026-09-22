@@ -124,7 +124,7 @@ group by shopID;
 select name, category, price
 from pastries
 where (category, price) in (
-    select category, MAX(price)
+    select category, max(price)
     from pastries
     group by category
 );
